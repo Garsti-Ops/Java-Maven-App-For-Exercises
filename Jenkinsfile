@@ -19,7 +19,7 @@ pipeline {
         stage('build image') {
             steps {
                 echo 'building docker image...'
-                sh 'docker build -t $IMAGE_NAME'
+                sh 'docker build -t $IMAGE_NAME .'
                 withCredentials([usernamePassword(credentialsId: 'Docker-Hub', usernameVariable: 'USER', passwordVariable: 'PASS')]) {
                     sh 'echo $PASS | docker login -u $USER --password-stdin'
                 }
