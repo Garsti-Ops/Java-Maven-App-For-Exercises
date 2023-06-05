@@ -1,11 +1,11 @@
 version: '3.8'
 services:
     java-maven-app:
-      image: ${IMAGE}
+      image: garstiops/garstiges-secret-repo:java-maven-2.0
       ports:
         - 8080:8080
     postgres:
-      image: postgres:13
+      image: postgres
       ports:
         - 5432:5432
       environment:

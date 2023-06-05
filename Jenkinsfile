@@ -30,9 +30,10 @@ pipeline {
             steps {
                 script {
                     echo 'deploying docker image to EC2...'
-                    def dockerCmd= 'docker run -p 3080:3080 -d garstiops/garstiges-secret-repo:java-maven-2.0'
+                    def dockerComposeCmd = "docker compose -f docker-compose.yaml up -d"
                     sshagent(['ec2-server-key']) {
-                        sh "ssh -o StrictHostKeyChecking=no ec2-user@3.123.31.148 ${dockerCmd}"
+                        sh "scp ./docker-compose.yml ec2-user@3.123.31.148:/home/ec2-user"
+                        sh "ssh -o StrictHostKeyChecking=no ec2-user@3.123.31.148 ${dockerComposeCmd}"
                     }
                 }
             }
