@@ -1,0 +1,12 @@
+aws ec2 run-instances --image-id ami-08e415170f52d1657 --count 1 --instance-type t2.micro --key-name MyKpCli --security-group-ids sg-0e89941d979a3711b --subnet-id subnet-0492920924ff6245e
+
+
+{
+    "AccessKey": {
+        "UserName": "MyUserCli",
+        "AccessKeyId": "AccessKey",
+        "Status": "Active",
+        "SecretAccessKey": "Secret",
+        "CreateDate": "2023-06-09T05:46:15+00:00"
+    }
+}

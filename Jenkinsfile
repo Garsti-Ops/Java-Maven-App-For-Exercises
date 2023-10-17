@@ -5,15 +5,19 @@ pipeline {
     tools {
         maven 'Maven'
     }
-    environment {
-        IMAGE_NAME = 'garstiops/garstiges-secret-repo:java-maven-2.0'
-    }
     stages {
+        stage('increment version') {
+
+        }
         stage('build app') {
             steps {
                 echo 'building application jar...'
-                sh 'mvn package'
-
+                sh 'mvn build-helper:parse-version versions:set \
+                        -DnewVersion=\\\${parsedVersion.majorVersion}.\\\${parsedVersion.minorVersion}.\\\${parsedVersion.nextIncrementalVersion} \
+                        versions:commit'
+                def matcher = readFile('pom.xml') =~ '<version>(.+)</version>'
+                def version = matcher[0][1]
+                env.IMAGE_NAME = "$version-$BUILD_NUMBER"
             }
         }
         stage('build image') {
@@ -39,5 +43,22 @@ pipeline {
                 }
             }
         }
+        stage('commit version update') {
+            steps {
+                script {
+                    withCredentials([usernamePassword(credentialsId: 'gitlab-credentials', passwordVariable: 'PASS', usernameVariable: 'USER')]) {
+                        // git config here for the first time run
+                        sh 'git config --global user.email "jenkins@example.com"'
+                        sh 'git config --global user.name "jenkins"'
+
+                        sh "git remote set-url origin https://${USER}:${PASS}@gitlab.com/nanuchi/java-maven-app.git"
+                        sh 'git add .'
+                        sh 'git commit -m "ci: version bump"'
+                        sh 'git push origin HEAD:jenkins-jobs'
+                    }
+                }
+            }
+        }
+
     }
 }
